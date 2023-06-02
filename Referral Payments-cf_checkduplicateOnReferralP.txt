@@ -1,0 +1,25 @@
+/*
+    Name: Check Duplicate Contacts Referral Payments
+    ID: 384082000002147001
+    Last Modified: 2023-04-25T10:16:43-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Referral Payments
+*/
+void automation.cf_checkduplicateOnReferralP(String referral_id)
+{
+referral_info = zoho.crm.getRecordById("Referrals",referral_id);
+related_refferal = zoho.crm.getRelatedRecords("Referrals","Contacts",referral_info.get("Contacto_Relacionado").get("id"));
+if(related_refferal.size() >= 2)
+{
+	info "updating Tag in all the child records";
+	for each  record in related_refferal
+	{
+		tagList = List();
+		tagList.add({"name":"4156601000376266613","id":"4156601000376266613"});
+		mapUpdate = Map();
+		mapUpdate.put("Tag",tagList);
+		info zoho.crm.updateRecord("Referrals",record.get("id"),mapUpdate);
+	}
+}
+}
