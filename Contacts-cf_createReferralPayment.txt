@@ -1,0 +1,47 @@
+/*
+    Name: Create Referral Payment
+    ID: 384082000001530001
+    Last Modified: 2023-04-06T07:55:26-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.cf_createReferralPayment(Int referido_id, String status)
+{
+contacto_referido = zoho.crm.getRecordById("Contacts",referido_id);
+//info contacto_referido;
+Contacto_Referidor = contacto_referido.get("Contacto_Referidor").get("id");
+Owner = contacto_referido.get("Owner").get("id");
+Email = ifNull(contacto_referido.get("Email"),"");
+Full_Name = ifNull(contacto_referido.get("Full_Name"),"");
+Phone = ifNull(contacto_referido.get("Phone"),"");
+City = ifNull(contacto_referido.get("City"),"");
+Sunnova_System_ID = ifNull(contacto_referido.get("Sunnova_System_ID"),"");
+Sales_Date = contacto_referido.get("Sales_Date");
+Installation_Start = contacto_referido.get("Installation_Start");
+new_refPayment = Map();
+new_refPayment.put("Contacto_Referidor",Contacto_Referidor.toLong());
+new_refPayment.put("ID_Contacto_Referidor",Contacto_Referidor);
+info "Owner: " + Owner;
+new_refPayment.put("Owner",Owner);
+new_refPayment.put("Email",Email);
+new_refPayment.put("Name",Full_Name);
+new_refPayment.put("Contacto_Relacionado",referido_id);
+new_refPayment.put("Telefono",Phone);
+new_refPayment.put("Pueblo",City);
+//info zoho.loginuserid; 
+//resp = zoho.crm.getRecordById("users", 232343223443241);
+//new_refPayment.put("Created_By",userId);
+new_refPayment.put("Numero_de_Contrato",Sunnova_System_ID.toString());
+if(!isNull(Sales_Date))
+{
+	new_refPayment.put("Fecha_de_Venta",Sales_Date);
+}
+if(!isNull(Installation_Start))
+{
+	new_refPayment.put("Fecha_de_Instalacion",Installation_Start);
+}
+new_refPayment.put("Sunnova_Status",status);
+new_record = zoho.crm.createRecord("Referrals",new_refPayment);
+info new_record;
+}
