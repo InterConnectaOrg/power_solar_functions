@@ -1,0 +1,42 @@
+/*
+    Name: Update Contact Test
+    ID: 384082000001044001
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+string standalone.updateContactsTest()
+{
+deals = {4156601000080386863,4156601000080386893,4156601000080386998,4156601000080387747,4156601000080387957,4156601000080387987,4156601000080388969,4156601000080388999,4156601000080389933,4156601000080389978,4156601000080390351,4156601000080390546,4156601000080390636,4156601000080390816,4156601000080390921,4156601000080390996,4156601000080391770,4156601000080391860,4156601000080391935};
+for each  deal_id in deals
+{
+	deal = zoho.crm.getRecordById("Deals",deal_id);
+	// 	if(deal.get("Completed_Stage_Date").startsWith("1970"))
+	// 	{
+	// 		info zoho.crm.updateRecord("Deals",deal_id,{"Completed_Stage_Date":null});
+	// 	}
+	// 	if(deal.get("NTP_Stage_Date").startsWith("1970"))
+	// 	{
+	// 		info zoho.crm.updateRecord("Deals",deal_id,{"NTP_Stage_Date":null});
+	// 	}
+	// 	if(deal.get("Final_Stage_Date").startsWith("1970"))
+	// 	{
+	// 		info zoho.crm.updateRecord("Deals",deal_id,{"Final_Stage_Date":null});
+	// 	}
+	// 	if(deal.get("Substantial_Stage_Date").startsWith("1970"))
+	// 	{
+	// 		info zoho.crm.updateRecord("Deals",deal_id,{"Substantial_Stage_Date":null});
+	// 	}
+	info deal_id;
+	contact_id = deal.get("Contact_Name").get("id");
+	info contact_id;
+	contact = zoho.crm.getRecordById("Contacts",contact_id.toLong());
+	contact_owner = contact.get("Owner").get("id");
+	info contact_owner;
+	info zoho.crm.updateRecord("Deals",deal_id,{"Owner":contact_owner.toLong()});
+	// 	info zoho.crm.updateRecord("Contacts",contact_id.toLong(),{"Loan_Type":deal.get("Sunnova_Contract_Type")});
+}
+// info deal;
+return "";
+}
