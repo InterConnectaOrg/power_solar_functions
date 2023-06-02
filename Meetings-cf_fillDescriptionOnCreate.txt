@@ -1,0 +1,55 @@
+/*
+    Name: Fill Description on Create
+    ID: 384082000000005001
+    Last Modified: 2019-10-01T08:45:52-04:00
+    Last Modified By: Power Solar
+    Language: deluge
+    Module: Meetings
+*/
+void automation.cf_fillDescriptionOnCreate(Int event_id)
+{
+/**
+ * @version: 1.0.0
+ * @author: Francisco Huapaya (InterConnecta)
+ * @created_time: 2019-09-25 18:00 EST
+ * @editor: -
+ * @modified_time: -
+ */
+event = zoho.crm.getRecordById("Events",event_id);
+se_module = event.get("$se_module");
+what_id = event.get("What_Id");
+lead_id = "";
+//
+tipo = event.get("Tipo");
+title = event.get("Event_Title");
+subject = tipo + " - " + title;
+to_update = {"Event_Title":subject};
+info zoho.crm.updateRecord("Events",event_id,to_update);
+//Getting id from what_Id 
+if(!what_id.isNull())
+{
+	lead_id = what_id.get("id");
+}
+//Validate if a lead is associated and getting fields to description
+if(se_module == "Leads" && !lead_id.isNull())
+{
+	//Adding type to event title
+	tipo = event.get("Tipo");
+	title = event.get("Event_Title");
+	subject = tipo + " - " + title;
+	//Adding info to description
+	lead_record = zoho.crm.getRecordById("Leads",lead_id);
+	casa_propia = lead_record.get("Casa_propia");
+	techo_cemento = lead_record.get("Techo_de_cemento");
+	factura = lead_record.get("Factura_AEE");
+	decription_info = "Tipo: " + tipo + "\n" + "Casa propia: " + casa_propia + "\n" + "Techo de cemento: " + techo_cemento + "\n" + "Factura AEE: " + factura;
+	to_update = {"Description":decription_info,"Event_Title":subject};
+	//Updating
+	info zoho.crm.updateRecord("Events",event_id,to_update);
+	info event;
+}
+else
+{
+	info "There isn't a Lead Associated";
+}
+}
