@@ -1,0 +1,159 @@
+/*
+    Name: Send Zoho Sign Template
+    ID: 384082000000524001
+    Last Modified: 2023-03-03T12:45:15-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contracts
+*/
+void automation.cf_sendZohoSignTemplate(Int contract_id)
+{
+/**
+	* @version: 1.0.0
+	* @author: Edgardo Samame (InterConnecta)
+	* @created_time: 2021-02-23 13:00 EST
+    * @editor: Diomar Martinez
+	* @modified_time: -
+*/
+// Zoho Sign Template
+templateID = 215294000000049027;
+// @getContract
+contract = zoho.crm.getRecordById("Contracts",contract_id);
+// info "Contract: " + contract;
+// @getContactInformation
+contact_name = "";
+contact = "";
+if(!isNull(contract.get("Contact_Name")))
+{
+	contact_name = contract.get("Contact_Name").get("name");
+	contact_id = contract.get("Contact_Name").get("id");
+	contact = zoho.crm.getRecordById("Contacts",contact_id);
+	contact_email = contact.get("Email");
+}
+// @getValuesForSignTemplate
+contract_no = contract.get("Name");
+contract_owner_name = contract.get("Owner").get("name");
+contract_owner_email = contract.get("Owner").get("email");
+company_name = "";
+if(!isNull(contract.get("Account_Name")))
+{
+	company_name = contract.get("Account_Name").get("name");
+}
+placa_solar = "";
+inversor = "";
+bateria = "";
+cantidad_placa = "";
+cantidad_inversor = "";
+cantidad_bateria = "";
+if(!isNull(contract.get("Marca_de_Placa")))
+{
+	placa_solar = contract.get("Marca_de_Placa");
+	cantidad_placa = contract.get("Cantidad_de_Placas");
+}
+if(!isNull(contract.get("Marca_de_Inversor")))
+{
+	inversor = contract.get("Marca_de_Inversor");
+	cantidad_inversor = contract.get("Cantidad_de_Inversores");
+}
+if(!isNull(contract.get("Marca_de_Bater_a")))
+{
+	bateria = contract.get("Marca_de_Bater_a");
+	cantidad_bateria = contract.get("Cantidad_de_Bater_as");
+}
+address = contract.get("Address");
+city = contract.get("City");
+state = contract.get("State");
+phone = contract.get("Phone");
+terms = contract.get("Terms");
+capacity = contract.get("Capacity");
+serial_no = contract.get("Serial_No");
+services = contract.get("Services_Information");
+amount = contract.get("Amount");
+contract_package = ifNull(contract.get("Contract_Package"),"");
+if(contract_package != "")
+{
+	contract_package = ifNull(contract_package.get("name"),"");
+}
+contract_owner = contract.get("Contract_Owner");
+action_map = Map();
+// Field Values
+text_fields = Map();
+text_fields.put("Contract_Number",contract_no);
+text_fields.put("Contact_Name",contact_name);
+text_fields.put("Account_Name",company_name);
+text_fields.put("Marca_Placa",placa_solar);
+text_fields.put("Cantidad_de_Placa",cantidad_placa);
+text_fields.put("Marca_Inversor",inversor);
+text_fields.put("Cantidad_de_Inversores",cantidad_inversor);
+text_fields.put("Marca_de_Bater_a",bateria);
+text_fields.put("Cantidad_de_Bater_as",cantidad_bateria);
+text_fields.put("Address",address);
+text_fields.put("City",city);
+text_fields.put("State",state);
+text_fields.put("Phone",phone);
+text_fields.put("Amount","$ " + amount);
+text_fields.put("Contract_Owner",contract_owner_name);
+text_fields.put("Contract_Package",contract_package);
+text_fields.put("Contract_ID",contract_id.toText());
+if(contract_package == "Silver")
+{
+	text_fields.put("Platinum_Package","");
+	text_fields.put("Gold_Package","");
+	text_fields.put("Silver_Package","X");
+}
+else if(contract_package == "Gold")
+{
+	text_fields.put("Platinum_Package","");
+	text_fields.put("Silver_Package","");
+	text_fields.put("Gold_Package","X");
+}
+else if(contract_package == "Platinum")
+{
+	text_fields.put("Platinum_Package","X");
+	text_fields.put("Silver_Package","");
+	text_fields.put("Gold_Package","");
+}
+//
+action_map.put("field_data",{"field_text_data":text_fields});
+//
+recipient_1 = Map();
+recipient_1.put("recipient_name",contact_name);
+recipient_1.put("recipient_email","diomar123@interconnecta.com");
+recipient_1.put("action_type","SIGN");
+recipient_1.put("action_id","215294000000049040");
+recipient_1.put("role","Customer");
+recipient_1.put("verify_recipient","false");
+//
+recipient_2 = Map();
+recipient_2.put("recipient_name",contract_owner_name);
+recipient_2.put("recipient_email","diomar123@interconnecta.com");
+recipient_2.put("action_type","SIGN");
+recipient_2.put("action_id","215294000000049042");
+recipient_2.put("role","Approver");
+recipient_2.put("verify_recipient","false");
+recipients = List();
+recipients.add(recipient_1);
+recipients.add(recipient_2);
+//
+action_map.put("actions",recipients);
+// Submit Map
+submit_map = Map();
+submit_map.put("templates",action_map);
+//
+parameters = Map();
+parameters.put("is_quicksend",true);
+parameters.put("data",submit_map);
+info "params" + parameters;
+template = zoho.sign.getTemplateById(215294000000049027);
+info template.get("templates").get("document_fields").get(0).get("fields").size();
+sent_template = zoho.sign.createUsingTemplate(templateID,parameters);
+info "Sent Template: " + sent_template;
+// @saveRequestIDInContract
+if(sent_template.containKey("requests"))
+{
+	//
+	request_id = sent_template.get("requests").get("request_id");
+	updated_contract = zoho.crm.updateRecord("Contracts",contract_id,{"Zoho_Sign_Request_ID":request_id});
+	info "Updated Contract: " + updated_contract;
+}
+}
