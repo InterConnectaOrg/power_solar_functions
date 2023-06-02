@@ -1,0 +1,30 @@
+/*
+    Name: Sync Deal Amount wit Net EPC
+    ID: 384082000002208001
+    Last Modified: 2023-05-18T07:47:30-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_syncDealAmountNetEPC(String deal_id)
+{
+deal_info = zoho.crm.getRecordById("Deals",deal_id);
+info deal_info;
+Subform_2 = deal_info.get("PRUEBA");
+total = 0;
+for each  sf in Subform_2
+{
+	if(!isNull(sf.get("Costo")))
+	{
+		if(sf.get("Costo") > 0)
+		{
+			total = total + sf.get("Costo");
+		}
+	}
+}
+info "Total " + total;
+mapUpt = Map();
+mapUpt.put("Amount",total);
+info mapUpt;
+info zoho.crm.updateRecord("Deals",deal_id,mapUpt,{"trigger":{"workflow"}});
+}
