@@ -1,0 +1,19 @@
+/*
+    Name: Create Invoice From Sales Order
+    ID: 384082000001859001
+    Last Modified: 2023-03-23T06:39:19-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_Create_Invoice_From_Sales_Order(String sales_order_id)
+{
+res = invokeurl
+[
+	url :"https://books.zoho.com/api/v3/invoices/fromsalesorder?organization_id=715840414&salesorder_id=" + sales_order_id
+	type :POST
+	connection:"zoho_books"
+];
+info res;
+return "";
+}
