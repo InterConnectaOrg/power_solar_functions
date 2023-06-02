@@ -1,0 +1,24 @@
+/*
+    Name: Update Contact With Sunnova Info
+    ID: 384082000001002001
+    Last Modified: 2022-02-17T06:41:53-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_updateContactWithSunnovaInfo(Int deal_id)
+{
+deal = zoho.crm.getRecordById("Deals",deal_id);
+contact_id = deal.get("Contact_Name").get("id");
+contact_id = contact_id.toLong();
+sunnova_stage = deal.get("Sunnova_Stage");
+system_project_status = deal.get("System_Project_Status");
+epc_less_spe = deal.get("EPC_Less_SPE_Rate");
+sunnova_contract_type = deal.get("Sunnova_Contract_Type");
+contact_map = Map();
+contact_map.put("Status",sunnova_stage);
+contact_map.put("Sunnova_Project_Status",system_project_status);
+contact_map.put("EPC_Less_SPE_Rate",epc_less_spe);
+contact_map.put("Loan_Type",sunnova_contract_type);
+info zoho.crm.updateRecord("Contacts",contact_id,contact_map);
+}
