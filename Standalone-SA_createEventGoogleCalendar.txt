@@ -1,0 +1,12 @@
+/*
+    Name: Create Event Google Calendar
+    ID: 384082000000632001
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+string standalone.SA_createEventGoogleCalendar()
+{
+return "";
+}
