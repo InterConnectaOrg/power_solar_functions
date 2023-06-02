@@ -1,0 +1,25 @@
+/*
+    Name: test
+    ID: 384082000000518003
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+string standalone.test()
+{
+/*idxs = {1,2,3};
+users = List();
+for each  idx in idxs
+{
+	response = zoho.crm.getRecords("users",idx,200,{"type":"ActiveUsers"});
+	response = response.get("users");
+	for each  res in response
+	{
+		users.add(res);
+	}
+}
+info users.toString();*/
+info zoho.crm.getRecordById("Products",4156601000228738035);
+return "";
+}
