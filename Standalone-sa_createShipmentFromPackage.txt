@@ -1,0 +1,76 @@
+/*
+    Name: Create Shipment From Package
+    ID: 384082000001484001
+    Last Modified: 2023-06-01T11:06:35-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_createShipmentFromPackage(String package_id_creator, String sales_order_id_creator)
+{
+//package_id_creator = "2268153000019953867";
+//sales_order_id_creator = "2268153000019844047";
+organizationID = "715840414";
+_salesorder = zoho.inventory.getRecordsByID("salesOrders",organizationID,sales_order_id_creator,"zoho_inventory");
+packages = _salesorder.get("salesorder").get("packages");
+cfs = _salesorder.get("salesorder").get("custom_fields");
+packagesShipmentCreated = "";
+for each  cf in cfs
+{
+	if(cf.get("customfield_id") == "2268153000019287175")
+	{
+		packagesShipmentCreated = cf.get("value");
+	}
+}
+shipmentIdCreated = "";
+for each  pkg in packages
+{
+	pkg = pkg.toMap();
+	package_id = pkg.get("package_id");
+	if(package_id_creator == package_id)
+	{
+		if(!packagesShipmentCreated.toString().contains(package_id))
+		{
+			request = invokeurl
+			[
+				url :"https://inventory.zoho.com/api/v1/packages/" + package_id + "?organization_id=" + organizationID
+				type :GET
+				connection:"zoho_inventory"
+			];
+			mapShipment = Map();
+			mapShipment.put("package_ids",package_id);
+			mapShipment.put("date",zoho.currentdate);
+			mapShipment.put("delivery_method","Power Solar");
+			mapShipment.put("salesorder_id",sales_order_id_creator);
+			resShip = zoho.inventory.createRecord("shipmentorders","715840414",mapShipment,"zoho_inventory");
+			info resShip;
+			shipmentIdCreated = resShip.get("shipmentorder").get("shipment_id");
+			request = invokeurl
+			[
+				url :"https://www.zohoapis.com/inventory/v1/shipmentorders/" + shipmentIdCreated + "/status/delivered?organization_id=" + organizationID
+				type :POST
+				connection:"zoho_inventory"
+			];
+			info "mark as delivered";
+			info request;
+			if(isNull(packagesShipmentCreated))
+			{
+				packagesShipmentCreated = package_id;
+			}
+			else
+			{
+				packagesShipmentCreated = packagesShipmentCreated + "," + package_id;
+			}
+		}
+		else
+		{
+			info "pkg";
+			info pkg;
+			shipmentIdCreated = pkg.get("shipment_order").get("shipment_id");
+		}
+	}
+}
+updateSale = {"custom_fields":{{"api_name":"cf_packages_shipment_created","value":packagesShipmentCreated}}};
+res = zoho.inventory.updateRecord("salesorders",organizationID,sales_order_id_creator,updateSale,"zoho_inventory");
+return shipmentIdCreated;
+}
