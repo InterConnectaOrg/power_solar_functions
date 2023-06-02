@@ -1,0 +1,28 @@
+/*
+    Name: Select Dates Confirmed
+    ID: 384082000000639001
+    Last Modified: 2021-04-20T08:28:39-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: Contracts
+*/
+void automation.cf_selectDatesConfirmed(Int contract_id)
+{
+contract = zoho.crm.getRecordById("Contracts",contract_id);
+services_information = contract.get("Services_Information");
+select_confirm_date = true;
+if(services_information.size() > 0)
+{
+	for each  service in services_information
+	{
+		if(!service.get("Confirmed_with_Customer"))
+		{
+			select_confirm_date = false;
+		}
+	}
+	if(select_confirm_date)
+	{
+		info zoho.crm.updateRecord("Contracts",contract_id,{"Dates_Confirmed":true},{"trigger":{"workflow"}});
+	}
+}
+}
