@@ -1,0 +1,14 @@
+/*
+    Name: Remove Dates if 1970
+    ID: 384082000001116001
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+void automation.cf_removeDatesIf1970(Int deal_id)
+{
+deals = zoho.crm.getRecordById("Deals",deal_id);
+NTP_Stage = deals.get("NTP_Stage_Date");
+info NTP_Stage == "1970-01-01";
+}
