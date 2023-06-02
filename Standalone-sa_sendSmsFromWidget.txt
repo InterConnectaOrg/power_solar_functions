@@ -1,0 +1,23 @@
+/*
+    Name: Send SMS From Widget
+    ID: 384082000000904001
+    Last Modified: 2021-08-28T12:56:34-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_sendSmsFromWidget(string mobile, string msg, int lead_id)
+{
+otherParams = Map();
+creating_creator_record = zoho.creator.createRecord("valeriapowersolarpr","just-to-send-sms-leads","SMS_History",{"Mobile":mobile,"lead_id":lead_id.toString()},otherParams,"crm_creator");
+info creating_creator_record;
+if(creating_creator_record.get("code") == 3000 && creating_creator_record.get("message") == "Data Added Successfully")
+{
+	return "OK";
+}
+else
+{
+	return "ERROR";
+}
+return "";
+}
