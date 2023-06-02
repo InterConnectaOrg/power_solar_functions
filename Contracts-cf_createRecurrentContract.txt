@@ -1,0 +1,90 @@
+/*
+    Name: Create Recurrent Contract
+    ID: 384082000000523001
+    Last Modified: 2021-02-24T03:11:27-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: Contracts
+*/
+void automation.cf_createRecurrentContract(Int contract_id)
+{
+//Obtener el contrato
+//Validar el estado del contrato
+//Mapear la información para crear uno nuevo
+//Creación de contrato con nueva fecha de vencimiento (Pending)
+//4775012000000340027
+contract = zoho.crm.getRecordById("Contracts",contract_id);
+//info contract;
+contract_account = contract.get("Account_Name");
+if(!contract_account.isNull())
+{
+	contract_account_name = contract_account.get("name");
+	contract_account_id = contract_account.get("id");
+	contract_address = contract.get("Address");
+	contract_amount = contract.get("Amount");
+	contract_capacity = contract.get("Capacity");
+	contract_city = contract.get("City");
+	contract_contact = contract.get("Contact_Name");
+	contract_contact_name = contract_contact.get("name");
+	contract_contact_id = contract_contact.get("id");
+	contract_record_image = contract.get("Record_Image");
+	contract_number = contract.get("Name");
+	contract_owner = contract.get("Owner");
+	contract_created_by = contract.get("Created_By");
+	contract_currency = contract.get("Currency");
+	contract_exchange_rate = contract.get("Exchange_Rate");
+	contract_expiry_date = contract.get("Expiry_Date");
+	contract_modified_by = contract.get("Modified_By");
+	contract_phone = contract.get("Phone");
+	contract_product = contract.get("Product_Name");
+	contract_product_name = contract_product.get("name");
+	contract_product_id = contract_product.get("id");
+	contract_product_serial_no = contract.get("Serial_No");
+	contract_product_services_information = contract.get("Services_Information");
+	contract_product_status = contract.get("Status");
+	contract_product_terms = contract.get("Terms");
+	services = List();
+	for each  service in contract_product_services_information
+	{
+		service_map = Map();
+		service_map.put("Description",service.get("Description"));
+		service_map.put("Quantity",service.get("Quantity"));
+		services.add(service_map);
+	}
+	if(contract_product_status == "Active")
+	{
+		/*	current_date = today;
+	day = current_date.getDay() - 1;
+	month = current_date.getMonth();
+	year = current_date.getYear() + 1;
+	date_time_string = day + "," + month + "," + year;
+	new_contract_expiry_date = toDate(date_time_string,"d,MM,yyyy"); */
+		contract_expiry_date = contract_expiry_date.toDate();
+		new_contract_expiry_date = contract_expiry_date.addYear(1);
+		new_contract = Map();
+		new_contract.put("Account_Name",contract_account_id);
+		new_contract.put("Address",contract_address);
+		new_contract.put("Amount",contract_amount);
+		new_contract.put("Capacity",contract_capacity);
+		new_contract.put("City",contract_city);
+		new_contract.put("Contact_Name",contract_contact_id);
+		new_contract.put("Record_Image",contract_record_image);
+		new_contract.put("Name",contract_number);
+		new_contract.put("Owner",contract_owner);
+		new_contract.put("Created_By",contract_created_by);
+		new_contract.put("Currency",contract_currency);
+		new_contract.put("Exchange_Rate",contract_exchange_rate);
+		new_contract.put("Expiry_Date",new_contract_expiry_date);
+		new_contract.put("Modified_By",contract_modified_by);
+		new_contract.put("Phone",contract_phone);
+		new_contract.put("Product_Name",contract_product_id);
+		new_contract.put("Serial_No",contract_product_serial_no);
+		new_contract.put("Services_Information",services);
+		new_contract.put("Status","Pending");
+		new_contract.put("Terms",contract_product_terms);
+		contract_new_response = zoho.crm.createRecord("Contracts",new_contract);
+		info contract_new_response;
+	}
+}
+info new_contract_expiry_date;
+}
