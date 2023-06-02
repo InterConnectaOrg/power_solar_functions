@@ -1,0 +1,25 @@
+/*
+    Name: Sync Item Zoho Inventory
+    ID: 384082000002228010
+    Last Modified: 2023-05-30T08:38:32-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Products
+*/
+void automation.cf_syncitemzohoinv(String product_id)
+{
+res = invokeurl
+[
+	url :"https://books.zoho.com/api/v3/crm/item/" + product_id + "/import"
+	type :POST
+	connection:"zoho_books"
+];
+info res;
+if(res.containKey("item"))
+{
+	zoho_books_id = res.get("item").get("item_id");
+	mapProd = Map();
+	mapProd.put("Item_Books_id",zoho_books_id);
+	info zoho.crm.updateRecord("Products",product_id,mapProd);
+}
+}
