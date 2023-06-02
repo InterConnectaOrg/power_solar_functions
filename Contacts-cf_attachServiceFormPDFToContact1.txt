@@ -1,0 +1,21 @@
+/*
+    Name: Attach Service Form PDF to Contact
+    ID: 384082000000276001
+    Last Modified: 2020-06-24T20:03:42-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: Contacts
+*/
+void automation.cf_attachServiceFormPDFToContact1(String pdf_url, Int contact_id)
+{
+heads = Map();
+heads.put("Accept","application/pdf");
+pdf = invokeurl
+[
+	url :pdf_url
+	type :GET
+];
+info pdf;
+response_attachment = zoho.crm.attachFile("Contacts",contact_id,pdf);
+info response_attachment;
+}
