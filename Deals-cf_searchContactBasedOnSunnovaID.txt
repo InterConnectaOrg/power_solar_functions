@@ -1,0 +1,18 @@
+/*
+    Name: Search Contact Based on Sunnova ID
+    ID: 384082000000942001
+    Last Modified: 2022-04-11T03:21:35-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_searchContactBasedOnSunnovaID(Int deal_id)
+{
+deal = zoho.crm.getRecordById("Deals",deal_id);
+Sunnova_System_ID = deal.get("Sunnova_System_ID");
+search_contact = zoho.crm.searchRecords("Contacts","(Sunnova_System_ID:equals:" + Sunnova_System_ID + ")");
+if(search_contact.size() > 0)
+{
+	info zoho.crm.updateRecord("Deals",deal_id,{"Contact_Name":search_contact.get(0).get("id"),"Owner":search_contact.get(0).get("Owner")});
+}
+}
