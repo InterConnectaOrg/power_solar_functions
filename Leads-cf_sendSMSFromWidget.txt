@@ -1,0 +1,17 @@
+/*
+    Name: Send SMS From Widget
+    ID: 384082000000905007
+    Last Modified: 2021-11-26T08:53:09-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Leads
+*/
+void automation.cf_sendSMSFromWidget(Int lead_id)
+{
+lead = zoho.crm.getRecordById("Leads",lead_id);
+mobile = lead.get("Enviado_a");
+content = lead.get("Last_SMS_Content");
+otherParams = Map();
+creating_creator_record = zoho.creator.createRecord("vivianapowersolarpr","just-to-send-sms-leads","SMS_History",{"Mobile":mobile,"Content":content,"lead_id":lead_id.toString()},otherParams,"crm_creator");
+info creating_creator_record;
+}
