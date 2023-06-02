@@ -1,0 +1,18 @@
+/*
+    Name: test
+    ID: 384082000001528001
+    Last Modified: 2022-10-04T05:58:52-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.test1()
+{
+sendmail
+[
+	from :zoho.adminuserid
+	to :"martin@interconnecta.com"
+	subject :"test"
+	message :"test"
+]
+}
