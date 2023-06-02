@@ -1,0 +1,36 @@
+/*
+    Name: Update Lead with Referral Information
+    ID: 384082000001425022
+    Last Modified: 2022-08-25T07:40:47-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Leads
+*/
+void automation.cf_updateLeadWithReferralInformation(Int lead_id)
+{
+lead = zoho.crm.getRecordById("Leads",lead_id);
+if(!isNull(lead))
+{
+	//info lead;
+	ID_Contacto_Referidor = lead.get("ID_Contacto_Referidor");
+	contact = zoho.crm.getRecordById("Contacts",ID_Contacto_Referidor.toLong());
+	if(!isNull(contact))
+	{
+		info contact;
+		Owner_id = contact.geT("Owner").get("id");
+		Sales_Date = ifNull(contact.geT("Sales_Date"),today);
+		Installation_Start = ifNull(contact.geT("Installation_End"),today);
+		City = ifNull(contact.geT("City"),"");
+		Sunnova_System_ID = ifNull(contact.get("Sunnova_System_ID"),"");
+		updMap = Map();
+		updMap.put("Consultor",Owner_id);
+		updMap.put("Fecha_de_Venta",Sales_Date);
+		updMap.put("Fecha_de_Instalaci_n",Installation_Start);
+		updMap.put("Contacto_Referidor",ID_Contacto_Referidor.toLong());
+		updMap.put("City",City);
+		updMap.put("Numero_de_Contrato",Sunnova_System_ID);
+		upd = zoho.crm.updateRecord("Leads",lead_id,updMap);
+		info upd;
+	}
+}
+}
