@@ -1,0 +1,32 @@
+/*
+    Name: Copy Serial Numbers to Contacts
+    ID: 384082000001842001
+    Last Modified: 2023-02-08T05:04:16-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts Serial Number
+*/
+void automation.cf_CopySerialNumberstoContacts(String csn_id)
+{
+//contact_id = "4156601000330443450";
+csn_info = zoho.crm.getRecordById("Contacts_Serial_Number",csn_id);
+contact_id = csn_info.get("Contact_SN").get("id");
+contact_sn = zoho.crm.getRelatedRecords("Contact_SN1","Contacts",contact_id);
+serial_numbers = "";
+for each  sn in contact_sn
+{
+	if(!isEmpty(sn.get("Name1")))
+	{
+		info sn.get("Name1").toLowerCase();
+		if(sn.get("Name1").toLowerCase().contains("ecoflow"))
+		{
+			sn_item = sn.get("Serial_Number");
+			serial_numbers = serial_numbers + sn_item + ",";
+		}
+	}
+}
+info "serial_numbers: " + serial_numbers;
+mapUpdate = Map();
+mapUpdate.put("EcoFlow_serial_number",serial_numbers);
+info zoho.crm.updateRecord("Contacts",contact_id,mapUpdate);
+}
