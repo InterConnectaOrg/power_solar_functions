@@ -1,0 +1,17 @@
+/*
+    Name: Update Deal With Sunnova Info
+    ID: 384082000001150001
+    Last Modified: 2022-02-18T08:42:36-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.cf_updateDealWithSunnovaInfo(Int contact_id)
+{
+contact_info = zoho.crm.getRecordById("Contacts",contact_id);
+search_deals = zoho.crm.searchRecords("Deals","(Sunnova_System_ID:equals:" + contact_info.get("Sunnova_System_ID") + ")");
+if(search_deals.size() > 0)
+{
+	info zoho.crm.updateRecord("Deals",search_deals.get(0).get("id").toLong(),{"Sunnova_Stage":contact_info.get("Status"),"Sunnova_Contract_Type":contact_info.get("Loan_Type")});
+}
+}
