@@ -1,0 +1,25 @@
+/*
+    Name: Send SMS
+    ID: 384082000000882001
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+string button.SendSMSLeads1(String lead_id)
+{
+lead = zoho.crm.getRecordById("Leads",lead_id);
+otherParams = Map();
+mobile = ifNull(lead.get("Phone"),false);
+if(!mobile)
+{
+	return "El número es obligatorio";
+}
+else
+{
+	info zoho.creator.createRecord("valeriapowersolarpr","just-to-send-sms-leads","SMS_History",{"Mobile":mobile,"lead_id":lead_id.toString()},otherParams,"crm_creator");
+	return "Revise la sección de SMS Information para saber si se envió el mensaje correctamente";
+}
+info lead;
+return "";
+}
