@@ -1,0 +1,32 @@
+/*
+    Name: Update Product Type
+    ID: 384082000001125001
+    Last Modified: 2022-04-10T12:51:42-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_updateProductType(Int deal_id, String product)
+{
+deal_info = zoho.crm.getRecordById("Deals",deal_id);
+if(deal_info.get("Layout").get("name") == "Sunnova")
+{
+	if(product == "Lease Storage")
+	{
+		product_id = 4156601000106529452;
+	}
+	else if(product == "Battery Loan")
+	{
+		product_id = 4156601000106529481;
+	}
+	else if(product == "Loan Storage")
+	{
+		product_id = 4156601000106529486;
+	}
+}
+else
+{
+	product_id = 4156601000118313091;
+}
+info zoho.crm.updateRecord("Deals",deal_id,{"iccommissionstool__Product_Type":product_id});
+}
