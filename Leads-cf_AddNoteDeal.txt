@@ -1,0 +1,145 @@
+/*
+    Name: Add Note to Lead Owner
+    ID: 384082000002006001
+    Last Modified: 2023-04-03T05:59:48-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Leads
+*/
+void automation.cf_AddNoteDeal(String deal_id)
+{
+deal_info = zoho.crm.getRecordById("Leads",deal_id);
+ultimos_digitos = deal_info.get("ltimos_4_d_gitos_del_SS");
+cantidad_miembros = deal_info.get("Cantidad_de_miembros_en_el_hogar");
+dueno = deal_info.get("Es_usted_el_due_o_de_la_propiedad_para_la_que_sol");
+requiere_equipos = deal_info.get("Padece_usted_de_alguna_condici_n_m_dica_que_requi");
+cual_dispositivo = deal_info.get("Si_marc_si_especifique_cu_l_dispositivo");
+edad = deal_info.get("Edad");
+residencia_principal = deal_info.get("Es_su_residencia_principal");
+ciudadano_americano = deal_info.get("Es_usted_ciudadano_Americano");
+nacionalidad = deal_info.get("Nacionalidad");
+nivel_basado = deal_info.get("El_nivel_de_ingresos_de_su_hogar_bas_ndose_en_la");
+nivel_ingresos = deal_info.get("Cu_l_es_el_nivel_de_ingresos");
+consultor = deal_info.get("Consultor_si_aplica");
+someter_boleto = deal_info.get("M_todo_para_Someter_Boleto");
+resultado_visita = deal_info.get("Resultado_de_Visita");
+if(!ultimos_digitos.isNull())
+{
+	ultimos_digitos = "Ultimos 4 digitos SS : " + ultimos_digitos + "\n";
+}
+else
+{
+	ultimos_digitos = "";
+}
+if(!cantidad_miembros.isNull())
+{
+	cantidad_miembros = "Cantidad de miembros en el hogar: " + cantidad_miembros + "\n";
+}
+else
+{
+	cantidad_miembros = "";
+}
+if(!dueno.isNull())
+{
+	dueno = "¿Es usted el dueño de la propiedad ? :" + dueno + "\n";
+}
+else
+{
+	dueno = "";
+}
+if(!requiere_equipos.isNull())
+{
+	requiere_equipos = "¿Requiere equipos electrónicos y/o refrigeración? : " + requiere_equipos + "\n";
+}
+else
+{
+	requiere_equipos = "";
+}
+if(!cual_dispositivo.isNull())
+{
+	cual_dispositivo = "Si marcó si, especifique cuál dispositivo:" + cual_dispositivo + "\n";
+}
+else
+{
+	cual_dispositivo = "";
+}
+if(!edad.isNull())
+{
+	edad = "Edad : " + edad + "\n";
+}
+else
+{
+	edad = "";
+}
+if(!residencia_principal.isNull())
+{
+	residencia_principal = "¿Es su residencia principal? :" + residencia_principal + "\n";
+}
+else
+{
+	residencia_principal = "";
+}
+if(!ciudadano_americano.isNull())
+{
+	ciudadano_americano = "¿Es usted ciudadano Americano?" + ciudadano_americano + "\n";
+}
+else
+{
+	ciudadano_americano = "";
+}
+if(!nacionalidad.isNull())
+{
+	nacionalidad = "Si marcó no especifique cuál " + nacionalidad + "\n";
+}
+else
+{
+	nacionalidad = "";
+}
+if(!nivel_basado.isNull())
+{
+	nivel_basado = "¿Nivel de ingresos es mayor a $20,000.00?" + ultimos_digitos + "\n";
+}
+else
+{
+	nivel_basado = "";
+}
+if(!nivel_ingresos.isNull())
+{
+	nivel_ingresos = "¿Cuál es el nivel de ingresos?" + nivel_ingresos + "\n";
+}
+else
+{
+	nivel_ingresos = " ";
+}
+if(!consultor.isNull())
+{
+	consultor = "Consultor si aplica" + consultor + "\n";
+}
+else
+{
+	consultor = " ";
+}
+if(!someter_boleto.isNull())
+{
+	someter_boleto = "Método para Someter Boleto" + someter_boleto + "\n";
+}
+else
+{
+	someter_boleto = " ";
+}
+if(!resultado_visita.isNull())
+{
+	resultado_visita = "Resultado de Visita" + resultado_visita + "\n";
+}
+else
+{
+	resultado_visita = " ";
+}
+content = ultimos_digitos + cantidad_miembros + dueno + requiere_equipos + cual_dispositivo + edad + residencia_principal + ciudadano_americano + nacionalidad + nivel_basado + nivel_ingresos + consultor + someter_boleto + resultado_visita;
+note = Map();
+note.put("Note_Content",content);
+note.put("Parent_Id",deal_id);
+note.put("se_module","Leads");
+responseNote = zoho.crm.createRecord("Notes",note);
+info responseNote;
+}
