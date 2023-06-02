@@ -1,0 +1,49 @@
+/*
+    Name: Campaign Active By Product
+    ID: 384082000001669007
+    Last Modified: 2023-05-30T08:53:21-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_campaignActiveByProduct()
+{
+filter = Map();
+filter.put("cvid","4156601000298623092");
+campaigns = zoho.crm.getRecords("Campaigns",1,200,filter);
+campaignsList = List();
+// info campaigns;
+idx = 0;
+for each  camp in campaigns
+{
+	camp_id = camp.get("id");
+	res = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v3/Campaigns/" + camp_id
+		type :GET
+		connection:"zoho_crm_api"
+	];
+	Promotional_Products = List();
+	if(res.get("data").size() == 1)
+	{
+		promo_prods = res.get("data").get(0).get("Promotional_Products");
+		for each  pp in promo_prods
+		{
+			pp.put("item_id",pp.get("Item_Books_id_1"));
+			Promotional_Products.add(pp);
+		}
+		camp.put("Promotional_Products",Promotional_Products);
+	}
+	else
+	{
+		camp.put("Promotional_Products",Promotional_Products);
+	}
+	camp.put("item_id",camp.get("Item_Books_id"));
+	campaignsList.add(camp);
+}
+data = Map();
+data.put("data",campaignsList);
+reponseJson = Map();
+reponseJson.put("body",data);
+return {"crmAPIResponse":reponseJson};
+}
