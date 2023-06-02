@@ -1,0 +1,17 @@
+/*
+    Name: IC_updateStatusReferral
+    ID: 384082000001665001
+    Last Modified: 2022-11-22T11:00:09-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.IC_updateStatusReferral(Int contact_id, String status)
+{
+related = zoho.crm.getRelatedRecords("Referrals_Contacts","Contacts",contact_id);
+if(related.size() > 0)
+{
+	referral_id = related.get(0).get("id");
+	info zoho.crm.updateRecord("Referrals",referral_id,{"Sunnova_Status":status});
+}
+}
