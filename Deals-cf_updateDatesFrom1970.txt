@@ -1,0 +1,40 @@
+/*
+    Name: Update Dates from 1970
+    ID: 384082000001186001
+    Last Modified: 2022-03-08T08:21:02-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_updateDatesFrom1970(Int deal_id)
+{
+deal = zoho.crm.getRecordById("Deals",deal_id);
+completed_stage = deal.get("Completed_Stage_Date");
+final_stage = deal.get("Final_Stage_Date");
+contract_stage = deal.get("Contract_Stage_Date");
+ntp_stage = deal.get("NTP_Stage_Date");
+substantial_stage = deal.get("Substantial_Stage_Date");
+to_update = Map();
+if(completed_stage == "1970-01-01")
+{
+	to_update.put("Completed_Stage_Date","");
+}
+if(final_stage == "1970-01-01")
+{
+	to_update.put("Final_Stage_Date","");
+}
+if(contract_stage == "1970-01-01")
+{
+	to_update.put("Contract_Stage_Date","");
+}
+if(ntp_stage == "1970-01-01")
+{
+	to_update.put("NTP_Stage_Date","");
+}
+if(substantial_stage == "1970-01-01")
+{
+	to_update.put("Substantial_Stage_Date","");
+}
+info to_update;
+info zoho.crm.updateRecord("Deals",deal_id,to_update);
+}
