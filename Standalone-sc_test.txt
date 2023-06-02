@@ -1,0 +1,12 @@
+/*
+    Name: Test Schedule
+    ID: 384082000001850007
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+void schedule.sc_test()
+{
+info "test";
+}
