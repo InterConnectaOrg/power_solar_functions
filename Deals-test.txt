@@ -1,0 +1,23 @@
+/*
+    Name: test
+    ID: 384082000001236003
+    Last Modified: 2022-05-16T15:05:32-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.test(Int deal_id)
+{
+// deal = zoho.crm.getRecordById("Deals", deal_id);
+histories = zoho.crm.getRelatedRecords("Stage_History","Deals",deal_id);
+for each  history in histories
+{
+	info history;
+	if(history.get("Stage") == "4156601000000006817")
+	{
+		datt = history.get("Last_Modified_Time").toDate();
+		info zoho.crm.updateRecord("Deals",deal_id,{"Closing_Date":datt});
+	}
+}
+// info deal;
+}
