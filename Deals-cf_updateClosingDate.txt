@@ -1,0 +1,16 @@
+/*
+    Name: Update Closing Date
+    ID: 384082000001164001
+    Last Modified: 2022-08-11T06:47:16-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_updateClosingDate(Int deal_id)
+{
+deal = zoho.crm.getRecordById("Deals",deal_id);
+info deal;
+substantial_date = deal.get("Substantial_Stage_Date");
+contract_date = deal.get("Contract_Stage_Date");
+info zoho.crm.updateRecord("Deals",deal_id,{"Closing_Date":contract_date});
+}
