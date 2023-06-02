@@ -1,0 +1,37 @@
+/*
+    Name: Update Products ID Promo
+    ID: 384082000001710001
+    Last Modified: 2022-12-13T17:22:46-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Campaigns
+*/
+void automation.cf_updateProductPromoId(String campaign_id)
+{
+campaign_products = zoho.crm.getRelatedRecords("Products3","Campaigns",campaign_id);
+items_id_zoho = "";
+for each  product in campaign_products
+{
+	product_id = product.get("Productos_Promos").get("id");
+	info "product_id: " + product_id;
+	query_param = Map();
+	query_param.put("zcrm_product_id",product_id);
+	get_item_inventory = zoho.inventory.getRecords("items","715840414",query_param,"zoho_inventory");
+	info get_item_inventory;
+	if(get_item_inventory.get("items").size() > 0)
+	{
+		if(items_id_zoho == "")
+		{
+			items_id_zoho = get_item_inventory.get("items").get(0).get("item_id");
+		}
+		else
+		{
+			items_id_zoho = items_id_zoho + "," + get_item_inventory.get("items").get(0).get("item_id");
+		}
+	}
+}
+info "items_id_zoho: " + items_id_zoho;
+mapCampaign = Map();
+mapCampaign.put("Product_Promo",items_id_zoho);
+info zoho.crm.updateRecord("Campaigns",campaign_id,mapCampaign);
+}
