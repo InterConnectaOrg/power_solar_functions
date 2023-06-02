@@ -1,0 +1,16 @@
+/*
+    Name: Send SMS From Widget Contacts
+    ID: 384082000000916001
+    Last Modified: 2021-11-26T06:40:57-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.cf_sendSmsFromWidgetContacts(Int contact_id)
+{
+contact = zoho.crm.getRecordById("Contacts",contact_id);
+otherParams = Map();
+mobile = ifNull(contact.get("Enviado_a"),"");
+content = contact.get("Last_SMS_Content");
+info zoho.creator.createRecord("vivianapowersolarpr","just-to-send-sms","SMS_History",{"Mobile":mobile,"Content":content,"contact_id":contact_id.toString()},otherParams,"crm_creator");
+}
