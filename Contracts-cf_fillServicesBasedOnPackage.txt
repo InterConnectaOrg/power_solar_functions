@@ -1,0 +1,52 @@
+/*
+    Name: Fill Services Based on Package
+    ID: 384082000000542001
+    Last Modified: 2021-03-03T06:05:11-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: Contracts
+*/
+void automation.cf_fillServicesBasedOnPackage(Int contract_id)
+{
+contract_record = zoho.crm.getRecordById("Contracts",contract_id);
+//
+contract_package = contract_record.get("Contract_Package");
+info contract_package;
+package_id = null;
+if(!isNull(contract_package))
+{
+	package_id = contract_package.get("id");
+}
+//
+package_record = zoho.crm.getRecordById("Contract_Packages",package_id);
+//
+service_tickets = package_record.get("Service_Tickets");
+//
+final_services = List();
+//
+if(!service_tickets.isEmpty())
+{
+	for each  ticket in service_tickets
+	{
+		quantity = ticket.get("Quantity");
+		//
+		service_map = Map();
+		service_map.put("Quantity",1);
+		service_map.put("Description",ticket.get("Description"));
+		final_services.add(service_map);
+		//
+		if(quantity == 2)
+		{
+			final_services.add(service_map);
+		}
+	}
+}
+//
+info final_services;
+//
+to_update = Map();
+to_update.put("Services_Information",final_services);
+//
+updated_contract = zoho.crm.updateRecord("Contracts",contract_id,to_update);
+info updated_contract;
+}
