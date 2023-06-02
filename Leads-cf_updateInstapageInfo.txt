@@ -1,0 +1,18 @@
+/*
+    Name: cf_updateInstapageInfo
+    ID: 384082000001349001
+    Last Modified: 2022-06-22T11:36:20-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Leads
+*/
+void automation.cf_updateInstapageInfo(Int lead_id)
+{
+lead = zoho.crm.getRecordById("Leads",lead_id);
+if(!isNull(lead))
+{
+	Telefono_Instapage = ifNull(lead.get("Telefono_Instapage"),"");
+	upd = zoho.crm.updateRecord("Leads",lead_id,{"Phone":Telefono_Instapage});
+	info upd;
+}
+}
