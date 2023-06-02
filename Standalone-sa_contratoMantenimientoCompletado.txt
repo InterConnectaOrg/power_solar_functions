@@ -1,0 +1,82 @@
+/*
+    Name: Contrato de Mantenimiento Completado
+    ID: 384082000000522001
+    Last Modified: 2021-04-19T17:06:09-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_contratoMantenimientoCompletado(String crmAPIRequest)
+{
+crmAPIRequestMap = crmAPIRequest.toMap();
+request_body = crmAPIRequestMap.get("body");
+requestMap = request_body.toMap();
+//
+response = Map();
+response.put("status_code",200);
+response.put("Content-Type","application/json");
+//
+hasRequests = requestMap.containKey("requests");
+if(requestMap.containKey("requests"))
+{
+	requestStr = requestMap.get("requests");
+	requestObj = requestStr.toMap();
+	response.put("body",{"requestObj":requestObj});
+	// @checkContractIsCompleted
+	if(requestObj.containKey("request_status"))
+	{
+		if(requestObj.get("request_status").equals("completed"))
+		{
+			// @getrequestId
+			request_id = requestObj.get("request_id");
+			response.put("body",{"request_id":request_id});
+			actions = requestObj.get("actions");
+			email = "";
+			order = 1000;
+			// @searchForContact	
+			for each  action in actions
+			{
+				if(action.get("action_type").equals("SIGN") && action.get("signing_order") == 1)
+				{
+					order = action.get("signing_order");
+					action_type = action.get("action_type");
+					email = action.get("recipient_email");
+					fullname = action.get("recipient_name");
+				}
+			}
+			document = zoho.sign.downloadDocument(request_id);
+			contract_found = zoho.crm.searchRecords("Contracts","(Zoho_Sign_Request_ID:equals:" + request_id + ")");
+			contract_id = contract_found.get(0).get("id");
+			document.setParamName("file");
+			uploadFile = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v2/files"
+				type :POST
+				files:document
+				connection:"zoho_attachments"
+			];
+			data_ = "{'data': [{'Signed_Contract': [" + uploadFile.get("data").get(0).get("details").get("id") + "]}]}";
+			putFile = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v2/Contracts/" + contract_id
+				type :PUT
+				parameters:data_
+				connection:"zoho_attachments"
+			];
+			// 			info zoho.crm.attachFile("Contracts",contract_id.toLong(),document);
+			// 			info zoho.crm.updateRecord("Contracts",contract_id.toLong(),{"Adjuntar_Documento":true},{"trigger":{"workflow"}});
+		}
+	}
+	else
+	{
+		response.put("body",{"no request status":requestObj});
+	}
+}
+else
+{
+	info "Error";
+	response.put("body",{"error":"No requests key"});
+}
+info response;
+return {"crmAPIResponse":response};
+}
