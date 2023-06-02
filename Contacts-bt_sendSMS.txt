@@ -1,0 +1,25 @@
+/*
+    Name: Send SMS
+    ID: 384082000000852001
+    Last Modified: 2021-08-02T07:17:29-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+string button.bt_sendSMS(String contact_id)
+{
+contact = zoho.crm.getRecordById("Contacts",contact_id);
+otherParams = Map();
+mobile = ifNull(contact.get("Mobile"),false);
+if(!mobile)
+{
+	return "El número es obligatorio";
+}
+else
+{
+	info zoho.creator.createRecord("valeriapowersolarpr","just-to-send-sms","SMS_History",{"Mobile":mobile,"contact_id":contact_id.toString()},otherParams,"crm_creator");
+	return "Revise la sección de SMS Information para saber si se envió el mensaje correctamente";
+}
+info contact;
+return "";
+}
