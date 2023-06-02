@@ -1,0 +1,86 @@
+/*
+    Name: Create Garantia ZBooks
+    ID: 384082000002111001
+    Last Modified: 2023-04-17T06:42:40-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_createGarantiaZBooks(String invoice_id)
+{
+getInvoice = zoho.inventory.getRecordsByID("invoices",715840414,invoice_id,"zoho_inventory");
+// info getInvoice;
+invoice = getInvoice.get("invoice");
+line_items = invoice.get("line_items");
+customer_id = invoice.get("customer_id");
+contact = zoho.inventory.getRecordsByID("contacts",715840414,customer_id,"zoho_inventory");
+contact = contact.get("contact");
+zcrm_contact_id = contact.get("zcrm_contact_id");
+// info contact;
+recordsCreated = List();
+for each  line in line_items
+{
+	item = zoho.inventory.getRecordsByID("items",715840414,line.get("item_id"),"zoho_inventory");
+	item = item.get("item");
+	custom_fields = item.get("custom_fields");
+	cf_garant_a_ecoflow = false;
+	for each  cf in custom_fields
+	{
+		if(cf.get("api_name") == "cf_garant_a_ecoflow")
+		{
+			cf_garant_a_ecoflow = cf.get("value");
+		}
+	}
+	info "cf_garant_a_ecoflow: " + cf_garant_a_ecoflow;
+	if(cf_garant_a_ecoflow)
+	{
+		serial_numbers = line.get("serial_numbers");
+		if(serial_numbers.size() > 0)
+		{
+			for each  sn in serial_numbers
+			{
+				garantiaRecord = Map();
+				garantiaRecord.put("Item_name",line.get("name"));
+				garantiaRecord.put("Line_Item_ID",line.get("line_item_id"));
+				garantiaRecord.put("Serial_number",sn);
+				garantiaRecord.put("Sales_Order_Id",invoice.get("salesorder_id"));
+				garantiaRecord.put("Invoice_number",invoice.get("invoice_number"));
+				garantiaRecord.put("Sales_order_number",invoice.get("reference_number"));
+				garantiaRecord.put("Fecha_de_venta",invoice.get("date"));
+				garantiaRecord.put("Invoice_Id",invoice.get("invoice_id"));
+				garantiaRecord.put("Contacto",zcrm_contact_id);
+				info garantiaRecord;
+				garantiaCreated = zoho.crm.createRecord("Garant_a_Ecoflow",garantiaRecord,{"trigger":{"workflow"}});
+				if(garantiaCreated.containKey("id"))
+				{
+					recordsCreated.add(garantiaCreated.get("id"));
+				}
+			}
+		}
+		else
+		{
+			garantiaRecord = Map();
+			garantiaRecord.put("Item_name",line.get("name"));
+			garantiaRecord.put("Line_Item_ID",line.get("line_item_id"));
+			garantiaRecord.put("Serial_number","");
+			garantiaRecord.put("Sales_Order_Id",invoice.get("salesorder_id"));
+			garantiaRecord.put("Invoice_number",invoice.get("invoice_number"));
+			garantiaRecord.put("Sales_order_number",invoice.get("reference_number"));
+			garantiaRecord.put("Fecha_de_venta",invoice.get("date"));
+			garantiaRecord.put("Invoice_Id",invoice.get("invoice_id"));
+			garantiaRecord.put("Contacto",zcrm_contact_id);
+			info garantiaRecord;
+			garantiaCreated = zoho.crm.createRecord("Garant_a_Ecoflow",garantiaRecord,{"trigger":{"workflow"}});
+			if(garantiaCreated.containKey("id"))
+			{
+				recordsCreated.add(garantiaCreated.get("id"));
+			}
+		}
+	}
+}
+if(recordsCreated.size() > 0)
+{
+	info zoho.inventory.updateRecord("invoices",715840414,invoice_id,{"custom_fields":{{"api_name":"cf_garant_a_ecoflow_id","value":recordsCreated.toString()}}},"zoho_inventory");
+}
+return "";
+}
