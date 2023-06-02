@@ -1,0 +1,44 @@
+/*
+    Name: Send Email Confirmation from Widget
+    ID: 384082000001425003
+    Last Modified: 2022-11-04T15:24:48-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_sendSalesOrderEmailConfirmationFromWidget(Int contact_id, String salesorder_link, String salesorder_number, String salesorder_date)
+{
+contact = zoho.crm.getRecordById("Contacts",contact_id);
+contact_name = contact.get("Full_Name");
+contact_email = contact.get("Email");
+sendmail
+[
+	from :"info@powersolarpr.com"
+	to :contact_email
+	subject :"Confirmación de compra: " + salesorder_number
+	message :"<div style='margin: 0 auto; width: 100%; background: #eeeeee; padding: 40px 24px; font-family: Arial, Helvetica, sans-serif;'><div style='margin: 0 auto; max-width: 600px;  background: white; padding: 40px 24px;'><table style='border: none; width: 100%;'><tbody><tr><td style='background: #0c0c0c; text-align: center; margin-bottom: 32px;'><img src='https://crm.zoho.com/crm/viewInLineImage?fileContent=f39209d9c187cbf359d258a888b1ebdc718256392e1e7a3eb6bb1cb1e2d78cd7e204299ca93f7168eb0c563b7e75b7c449ec01c7f0428322c8173dc19c01cb3782d2e3dbf78d0288f81d27a943435da84d288f03c347a6809bc063f256d91295' align='top' height='auto' width='120px'><br></td></tr><tr><td><br><br>Estimado(a) &nbsp;<b>" + contact_name + "</b>, se adjunta la orden de venta realizada el día " + salesorder_date + ". <br> <br> Haga click en el siguiente enlace para ver el <a href='" + salesorder_link + "'>documento</a></td></tr><tr><td><br><i>Equipo Power Solar</i></td></tr></tbody></table></div><br></div>"
+]
+mail_response = {"to":contact_name,"to_email":contact_email,"salesorder_number":salesorder_number,"status":"sent"};
+return "[" + mail_response + "]";
+/// Send Email using Native Send Mail API method [Doesn't work]
+// params = {
+// 	"data":[
+// 		{
+// 			"from": {"user_name":"Viviana Ortiz","email":"viviana@powersolarpr.com"},
+// 			"to": [{"user_name": contact_name, "user_email":contact_email}],
+// 			"org_email":false,
+// 			"subject":"Confirmación de compra: " + salesorder_number,
+// 			"mail_format": "html",
+// 			"content":"<div style='margin: 0 auto; width: 100%; background: #eeeeee; padding: 40px 24px; font-family: Arial, Helvetica, sans-serif;'><div style='margin: 0 auto; max-width: 600px;  background: white; padding: 40px 24px;'><table style='border: none; width: 100%;'><tbody><tr><td style='background: #0c0c0c; text-align: center; margin-bottom: 32px;'><img src='https://crm.zoho.com/crm/viewInLineImage?fileContent=f39209d9c187cbf359d258a888b1ebdc718256392e1e7a3eb6bb1cb1e2d78cd7e204299ca93f7168eb0c563b7e75b7c449ec01c7f0428322c8173dc19c01cb3782d2e3dbf78d0288f81d27a943435da84d288f03c347a6809bc063f256d91295' align='top' height='auto' width='120px'><br></td></tr><tr><td><br><br>Estimado(a) &nbsp;<b>"+contact_name+"</b>, se adjunta la orden de venta realizada el día "+salesorder_date+". <br> <br> Haga click en el siguiente enlace para ver el <a href='"+salesorder_link+"'>documento</a></td></tr><tr><td><br><i>Equipo Power Solar</i></td></tr></tbody></table></div><br></div>"
+// 		}
+// 	]
+// };
+// email_sent_to_customer = invokeurl
+// [
+// 	url :"https://www.zohoapis.com/crm/v2/Contacts/" + contact_id + "/actions/send_mail"
+// 	type :POST
+// 	parameters:params.toString()
+// 	connection:"zoho_crm_api"
+// ];
+// info email_sent_to_customer;
+}
