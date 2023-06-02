@@ -1,0 +1,61 @@
+/*
+    Name: Associate Product To Deal
+    ID: 384082000001059003
+    Last Modified: 2022-07-15T03:34:36-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_associateProductToDeal(Int deal_id)
+{
+deal = zoho.crm.getRecordById("Deals",deal_id);
+// info deal;
+sunnova_contract_type = deal.get("Sunnova_Contract_Type");
+product_type = ifNull(deal.get("iccommissionstool__Product_Type"),"");
+related_products = zoho.crm.getRelatedRecords("Products","Deals",deal_id);
+products = {"Battery Loan":4156601000095603998,"Lease Storage":4156601000095603988,"Loan Storage":4156601000095603978,"EcoFlow":4156601000117003055};
+products_type = {"Battery Loan":4156601000106529481,"Lease Storage":4156601000106529452,"Loan Storage":4156601000106529486,"cash":4156601000118313091,"EcoFlow":4156601000203715089};
+if(deal.get("Layout").get("name") == "Cash")
+{
+	info zoho.crm.updateRecord("Deals",deal_id,{"iccommissionstool__Product_Type":4156601000118313091});
+}
+if(product_type == "")
+{
+	for each  product in products_type
+	{
+		product_id = ifNull(products_type.get(sunnova_contract_type),"");
+	}
+	if(product_id != "")
+	{
+		info product_id;
+		info zoho.crm.updateRecord("Deals",deal_id,{"iccommissionstool__Product_Type":product_id});
+	}
+}
+if(related_products.size() == 0)
+{
+	//associate the product
+	for each  product in products
+	{
+		product_id = ifNull(products.get(sunnova_contract_type),"");
+	}
+	if(product_id != "")
+	{
+		update = zoho.crm.updateRelatedRecord("Products",product_id.toLong(),"Deals",deal_id,{"PRODUCTID":product_id});
+	}
+	// 	info update;
+}
+else
+{
+	if(!related_products.get(0).contains(sunnova_contract_type))
+	{
+		for each  product in products
+		{
+			product_id = ifNull(products.get(sunnova_contract_type),"");
+		}
+		if(product_id != "")
+		{
+			update = zoho.crm.updateRelatedRecord("Products",product_id.toLong(),"Deals",deal_id,{"PRODUCTID":product_id});
+		}
+	}
+}
+}
