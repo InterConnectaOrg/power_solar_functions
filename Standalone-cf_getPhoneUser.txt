@@ -1,0 +1,32 @@
+/*
+    Name: Get Phone User
+    ID: 384082000001650003
+    Last Modified: 2022-11-18T10:15:04-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.cf_getPhoneUser(String user_id)
+{
+get_users = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v3/users?type=ActiveUsers"
+	type :GET
+	connection:"zoho_crm_api"
+];
+phone = "";
+users = get_users.get("users");
+for each  user in users
+{
+	if(user.get("id") == user_id)
+	{
+		phone = user.get("phone");
+		break;
+	}
+}
+data = Map();
+data.put("phone",phone);
+response = Map();
+response.put("body",data);
+return {"crmAPIResponse":response};
+}
