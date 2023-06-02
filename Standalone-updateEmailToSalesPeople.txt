@@ -1,0 +1,20 @@
+/*
+    Name: Update Email To Sales People
+    ID: 384082000001183003
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+string standalone.updateEmailToSalesPeople()
+{
+salesPeople = zoho.crm.getRecords("iccommissionstool__Sales_Managers",0,200,{"cvid":4156601000122149087});
+for each  salesPerson in salesPeople
+{
+	userinfo = zoho.crm.searchRecords("users","(First_Name:equals:" + salesPerson.get("Name") + ")");
+	info userinfo;
+	// 	owner = salesPerson.get("Owner").get("email");
+	// 	info zoho.crm.updateRecord("iccommissionstool__Sales_Managers", salesPerson.get("id").toLong(), {"Email":owner});
+}
+return "";
+}
