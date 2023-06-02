@@ -1,0 +1,25 @@
+/*
+    Name: Update Tag Referral Payment
+    ID: 384082000002135001
+    Last Modified: 2023-04-20T06:06:08-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.cf_updateTagReferralPayment(String contact_id)
+{
+contact_info = zoho.crm.getRecordById("Contacts",contact_id);
+// info contact_info;
+if(!isNull(contact_info.get("Contacto_Referidor")))
+{
+	get_payment = zoho.crm.getRelatedRecords("Referrals_Contacts","Contacts",contact_id);
+	if(get_payment.size() > 0)
+	{
+		payment_id = get_payment.get(0).get("id");
+		payMap = Map();
+		payMap.put("TAG_de_referido","Oferta seguro en el hogar");
+		info "payment_id " + payment_id;
+		info zoho.crm.updateRecord("Referrals",payment_id,payMap);
+	}
+}
+}
