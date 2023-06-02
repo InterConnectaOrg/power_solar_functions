@@ -1,0 +1,34 @@
+/*
+    Name: Attach PDF From Zoho Creator to Contact
+    ID: 384082000001866011
+    Last Modified: 2023-02-08T05:16:54-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.cf_Attach_PDF_From_Zoho_Creator_to_Contact(String salesorder_id, String record_creator_id)
+{
+//salesorder_id = "2268153000034105005";
+//record_creator_id = "4014559000004582011";
+salesorder_info = zoho.inventory.getRecordsByID("salesorders",715840414,salesorder_id,"zoho_inventory");
+salesorder_info = salesorder_info.get("salesorder");
+customer_id = salesorder_info.get("customer_id");
+contact_info = zoho.inventory.getRecordsByID("contacts",715840414,customer_id,"zoho_inventory");
+contact_info = contact_info.get("contact");
+zcrm_contact_id = contact_info.get("zcrm_contact_id");
+info "zcrm_contact_id: " + zcrm_contact_id;
+if(!isEmpty(zcrm_contact_id))
+{
+	file_name = "pdf-zoho-creator-" + record_creator_id;
+	url1 = "https://creatorapp.zohopublic.com/vivianapowersolarpr/service-forms/record-pdf/All_Forms/" + record_creator_id + "/" + file_name + "/V1EUWYrdHmZ2Pg0SJnEB91nxOyTH3M3JNjg0rqHzQdB9HwXCNUWaq2dOD5W5OsMA96gSF6GpPVYwaqj1AYFrKGfKFNwSXEtnTCHn";
+	file_resp = invokeurl
+	[
+		url :url1
+		type :GET
+	];
+	file_resp.setparamname("file");
+	info file_resp;
+	info zoho.crm.attachFile("contacts",zcrm_contact_id,file_resp);
+}
+return zcrm_contact_id;
+}
