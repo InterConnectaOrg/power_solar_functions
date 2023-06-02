@@ -1,0 +1,33 @@
+/*
+    Name: Update Referral From Contact
+    ID: 384082000001454005
+    Last Modified: 2022-08-24T12:44:54-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Contacts
+*/
+void automation.cf_updateReferralFromContact(Int contact_id)
+{
+contact = zoho.crm.getRecordById("Contacts",contact_id);
+if(!isNull(contact))
+{
+	//info contact;
+	Referido = ifNull(contact.get("Referido"),"");
+	Full_Name = ifNull(contact.get("Full_Name"),"");
+	Email = ifNull(contact.get("Email"),"");
+	Phone = ifNull(contact.get("Phone"),"");
+	Sales_Date = ifNull(contact.get("Sales_Date"),"");
+	Installation_Start = ifNull(contact.get("Installation_Start"),"");
+	City = ifNull(contact.get("City"),"");
+	updMap = Map();
+	updMap.put("Email",Email);
+	updMap.put("Fecha_de_Instalacion",Installation_Start);
+	updMap.put("Fecha_de_Venta",Sales_Date);
+	updMap.put("Name",Full_Name);
+	//updMap.put("Numero_de_Contrato", contact_id);
+	updMap.put("Pueblo",City);
+	updMap.put("Telefono",Phone);
+	referral_upd = zoho.crm.updateRecord("Referrals",Referido.get("id"),updMap);
+	info referral_upd;
+}
+}
