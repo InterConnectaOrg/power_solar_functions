@@ -1,0 +1,39 @@
+/*
+    Name: Upload File Into Signed Field
+    ID: 384082000000637015
+    Last Modified: 2021-04-19T17:06:27-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: Contracts
+*/
+void automation.cf_uploadFileIntoSignedField(Int contract_id)
+{
+attachments = zoho.crm.getRelatedRecords("Attachments","Contracts",contract_id);
+info attachments.get(0).get("id");
+downloadFile = invokeurl
+[
+	url :"https://sign.zoho.com/api/v1/requests/" + 215294000000051209 + "/pdf"
+	type :GET
+	connection:"crm_sign"
+];
+downloadFile.setParamName("file");
+uploadFile = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v2/files"
+	type :POST
+	files:downloadFile
+	connection:"zoho_attachments"
+];
+info uploadFile.get("data").get(0).get("details").get("id");
+data_ = "{'data': [{'Signed_Contract': [" + uploadFile.get("data").get(0).get("details").get("id") + "]}]}";
+putFile = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v2/Contracts/" + contract_id
+	type :PUT
+	parameters:data_
+	connection:"zoho_attachments"
+];
+info putFile;
+info downloadFile;
+info uploadFile;
+}
