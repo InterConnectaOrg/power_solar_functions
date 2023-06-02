@@ -1,0 +1,54 @@
+/*
+    Name: Create Zoho Desk Tickets
+    ID: 384082000000521003
+    Last Modified: 2021-03-03T06:53:42-04:00
+    Last Modified By: Valeria Carmona
+    Language: deluge
+    Module: Contracts
+*/
+void automation.cf_createzohodesktickets(Int contract_id)
+{
+contract_record = zoho.crm.getRecordById("Contracts",contract_id);
+//
+desk_contact_id = "578807000000162027";
+org_id = "741025098";
+department_id = "578807000000006907";
+//
+base_contract_url = "https://crm.zoho.com/crm/org695417604/tab/CustomModule1/" + contract_id;
+t_desc = "<div><a href='" + base_contract_url + "' target='_blank'>Contract in CRM</a></div>";
+//
+services = contract_record.get("Services_Information");
+contract_name = contract_record.get("Name");
+subject = contract_name + " - " + "Lawrence";
+//
+if(!isNull(services))
+{
+	for each  service in services
+	{
+		service_description = service.get("Description");
+		service_date = service.get("Service_Date");
+		//
+		description = "<div><div><b>Description: </b></div><div>" + service_description + "</div><br><div><b>Fecha de visita: <b></div>" + service_date + "<br><div>Click acá para ver el Contrato: </div>" + base_contract_url + "</div>";
+		subject = contract_name + " - " + service_description + " - " + "Lawrence";
+		ticket_map = Map();
+		ticket_map.put("description",description);
+		ticket_map.put("channel","Web");
+		ticket_map.put("contactId",desk_contact_id);
+		ticket_map.put("departmentId",department_id);
+		ticket_map.put("subject",subject);
+		ticket_map.put("customFields",{"CRM Contract ID":contract_id.toString()});
+		// @createTicket
+		created_ticket = zoho.desk.create(org_id,"tickets",ticket_map);
+		info "Created Ticket: " + created_ticket;
+		ticket_number = created_ticket.get("ticketNumber");
+		ticket_status = created_ticket.get("status");
+		// @setServiceValues
+		service.put("Ticket_No",ticket_number);
+		service.put("Status",ticket_status);
+	}
+	//
+	// @updateContractServices
+	updated_contract = zoho.crm.updateRecord("Contracts",contract_id,{"Services_Information":services});
+	info "Updated Contract: " + updated_contract;
+}
+}
