@@ -1,0 +1,39 @@
+/*
+    Name: Update Package from Creator
+    ID: 384082000002251001
+    Last Modified: 2023-06-01T11:03:13-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_updatePackageFromCreator(string package_id_creator, string item_list)
+{
+convert_item_list = item_list.toList();
+package_info = zoho.inventory.getRecordsByID("packages",715840414,package_id_creator,"zoho_inventory");
+line_items = package_info.get("package").get("line_items");
+new_items = List();
+for each  ln in line_items
+{
+	item_search = null;
+	for each  it in convert_item_list
+	{
+		if(it.get("item_id") == ln.get("item_id") && it.get("quantity") > 0)
+		{
+			item_search = it;
+		}
+	}
+	if(!isNull(item_search))
+	{
+		nln = Map();
+		nln.put("line_item_id",ln.get("line_item_id"));
+		nln.put("so_line_item_id",ln.get("so_line_item_id"));
+		nln.put("quantity",item_search.get("quantity"));
+		new_items.add(nln);
+	}
+}
+uptMap = Map();
+uptMap.put("line_items",new_items);
+info uptMap;
+data = zoho.inventory.updateRecord("packages",715840414,package_id_creator,uptMap,"zoho_inventory");
+return data;
+}
