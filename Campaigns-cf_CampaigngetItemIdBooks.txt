@@ -1,0 +1,20 @@
+/*
+    Name: Campaign get Item Id Books
+    ID: 384082000002229003
+    Last Modified: 2023-05-30T08:47:17-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Campaigns
+*/
+void automation.cf_CampaigngetItemIdBooks(String camp_id)
+{
+camp_info = zoho.crm.getRecordById("Campaigns",camp_id);
+product_id = camp_info.get("Product").get("id");
+item_crm_info = zoho.crm.getRecordById("Products",product_id);
+if(!isNull(item_crm_info.get("Item_Books_id")))
+{
+	campUpd = Map();
+	campUpd.put("Item_Books_id",item_crm_info.get("Item_Books_id"));
+	info zoho.crm.updateRecord("Campaigns",camp_id,campUpd);
+}
+}
