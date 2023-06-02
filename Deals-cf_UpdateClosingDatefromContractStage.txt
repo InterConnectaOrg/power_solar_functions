@@ -1,0 +1,15 @@
+/*
+    Name: Update Closing Date from Contract Stage
+    ID: 384082000001997001
+    Last Modified: 2023-03-27T08:46:09-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: Deals
+*/
+void automation.cf_UpdateClosingDatefromContractStage(String deal_id)
+{
+deal_info = zoho.crm.getRecordById("Deals",deal_id);
+deal_map = Map();
+deal_map.put("Closing_Date",deal_info.get("Contract_Stage_Date"));
+info zoho.crm.updateRecord("Deals",deal_id,deal_map);
+}
