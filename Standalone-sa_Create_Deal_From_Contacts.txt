@@ -1,0 +1,51 @@
+/*
+    Name: Create Deal From Contacts
+    ID: 384082000001572001
+    Last Modified: null
+    Last Modified By: null
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_Create_Deal_From_Contacts()
+{
+query_map = Map();
+query_map.put("cvid","4156601000268726800");
+query_map.put("sort_order","asc");
+query_map.put("sort_by","Sales_Date");
+crmresponse = zoho.crm.getRecords("Contacts",0,200,query_map);
+key = 0;
+for each  contact_info in crmresponse
+{
+	contact_id = contact_info.get("id");
+	info "contact_id: " + contact_id;
+	get_contact_deals = zoho.crm.getRelatedRecords("Deals","Contacts",contact_id);
+	info "get_contact_deals: " + get_contact_deals.size();
+	mapContact = Map();
+	mapContact.put("Shade_Study_Aurora",true);
+	contactUpdated = zoho.crm.updateRecord("Contacts",contact_id,mapContact);
+	//info contactUpdated;
+	if(get_contact_deals.size() == 0)
+	{
+		newDeal = Map();
+		newDeal.put("Deal_Name","EcoFlow - " + contact_info.get("Full_Name"));
+		newDeal.put("Closing_Date",contact_info.get("Sales_Date"));
+		newDeal.put("Contact_Name",contact_id);
+		newDeal.put("Owner",contact_info.get("Owner").get("id"));
+		total = 0;
+		if(!isNull(contact_info.get("Deposit_amount")))
+		{
+			total = contact_info.get("Deposit_amount").replaceAll(",","").remove("$");
+			info "total: " + total;
+		}
+		newDeal.put("Amount",total);
+		newDeal.put("Stage","Closed Won");
+		newDeal.put("iccommissionstool__Product_Type",4156601000203715089);
+		newDeal.put("Layout",4156601000266129615);
+		//info newDeal;
+		createDeal = zoho.crm.createRecord("Deals",newDeal);
+		//info createDeal;
+	}
+	//break;
+}
+return "";
+}
