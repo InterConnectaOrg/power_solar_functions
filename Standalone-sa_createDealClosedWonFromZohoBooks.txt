@@ -1,0 +1,33 @@
+/*
+    Name: Create Deal Closed Won from Zoho Books
+    ID: 384082000001554005
+    Last Modified: 2022-10-14T11:21:30-04:00
+    Last Modified By: Viviana Ortiz
+    Language: deluge
+    Module: null
+*/
+string standalone.sa_createDealClosedWonFromZohoBooks(string sales_order_id)
+{
+orgID = "715840414";
+_salesorder = zoho.inventory.getRecordsByID("salesOrders",orgID,sales_order_id,"zoho_inventory");
+_salesorder = _salesorder.get("salesorder");
+total = _salesorder.get("total");
+customer_id = _salesorder.get("customer_id");
+info "customer_id: " + customer_id;
+customer_info = zoho.inventory.getRecordsByID("contacts",orgID,customer_id,"zoho_inventory");
+zcrm_contact_id = customer_info.get("contact").get("zcrm_contact_id");
+info "zcrm_contact_id: " + zcrm_contact_id;
+contact_info = zoho.crm.getRecordById("Contacts",zcrm_contact_id);
+newDeal = Map();
+newDeal.put("Deal_Name",contact_info.get("Full_Name"));
+newDeal.put("Closing_Date",zoho.currentdate);
+newDeal.put("Contact_Name",zcrm_contact_id);
+newDeal.put("Owner",contact_info.get("Owner").get("id"));
+newDeal.put("Amount",total);
+newDeal.put("Stage","Closed Won");
+newDeal.put("iccommissionstool__Product_Type",4156601000203715089);
+newDeal.put("Layout",4156601000266129615);
+createDeal = zoho.crm.createRecord("Deals",newDeal);
+// info zoho.crm.getRecordById("Deals", 4156601000266261291);
+return createDeal;
+}
